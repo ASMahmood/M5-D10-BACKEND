@@ -47,9 +47,11 @@ mediaRouter.get("/:mediaID", async (req, res, next) => {
 
 mediaRouter.get("/search/movies", async (req, res, next) => {
   try {
-    await axios.get(
-      `http://www.omdbapi.com/?apikey=${process.env.OMDB_API_KEY}&s=${req.query.plzwork}`
-    );
+    await axios
+      .get(
+        `http://www.omdbapi.com/?apikey=${process.env.OMDB_API_KEY}&s=${req.query.searchQuery}`
+      )
+      .then((response) => res.send(response.data));
   } catch (error) {
     console.log(error);
     next(error);
