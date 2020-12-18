@@ -2,14 +2,22 @@ const express = require("express");
 const uniqid = require("uniqid");
 const multer = require("multer");
 const axios = require("axios");
+const cloudinary = require("../lib/cloudinary");
+const { CloudinaryStorage } = require("multer-storage-cloudinary");
 const { writeFile, writeJson } = require("fs-extra");
 const { join, extname } = require("path");
 
 const { readMedia, writeMedia } = require("../lib/utilities");
-const { default: Axios } = require("axios");
 
 const mediaRouter = express.Router();
 const upload = multer({});
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: "m5d10",
+  },
+});
+const cloudinaryMulter = multer({ storage: storage });
 
 const mediaImagesPath = join(__dirname, "../../public/images");
 
@@ -230,7 +238,7 @@ mediaRouter.delete("/:mediaID/reviews/:reviewID", async (req, res, next) => {
 
 mediaRouter.post(
   "/:mediaID/upload",
-  upload.single("mediaPoster"),
+  cloudinaryMulter.single("mediaPoster"),
   async (req, res, next) => {
     try {
       const mediaDB = await readMedia();
@@ -238,14 +246,8 @@ mediaRouter.post(
         (media) => media.imdbID === req.params.mediaID
       );
       if (singleMediaIndex !== -1) {
-        const imageName = req.params.mediaID + extname(req.file.originalname);
         try {
-          await writeFile(join(mediaImagesPath, imageName), req.file.buffer);
-          mediaDB[singleMediaIndex].Poster =
-            process.env.NODE_ENV === "production"
-              ? process.env.BE_URL_PROD + "/images/" + imageName
-              : process.env.BE_URL_DEV + "/images/" + imageName;
-
+          mediaDB[singleMediaIndex].Poster = req.file.path;
           await writeMedia(mediaDB);
           res.send("Poster Added!");
         } catch (error) {
