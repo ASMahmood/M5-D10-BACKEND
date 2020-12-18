@@ -14,7 +14,22 @@ const mediaRouter = require("./media");
 const server = express();
 const port = process.env.PORT || 3003;
 
-server.use(cors());
+const whitelist =
+  process.env.NODE_ENV === "production"
+    ? [process.env.FE_URL_PROD]
+    : [process.env.FE_URL_DEV];
+
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (whitelist.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error("NOT ALLOWED - CORS ISSUES"));
+    }
+  },
+};
+
+server.use(cors(corsOptions));
 server.use(express.json());
 
 server.use("/images", express.static(join(__dirname, "../public/images")));
