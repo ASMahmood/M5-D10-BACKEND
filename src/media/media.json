@@ -4,7 +4,7 @@
     "Year": "2001",
     "imdbID": "tt0120737",
     "Type": "movie",
-    "Poster": "http://localhost:6969/images/tt0120737.gif",
+    "Poster": "https://m5-d10-backend-asm.herokuapp.com/images/tt0120737.gif",
     "reviews": [
       {
         "comment": "yh bro, i love this film <3",

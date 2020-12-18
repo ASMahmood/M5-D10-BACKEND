@@ -240,7 +240,10 @@ mediaRouter.post(
         try {
           await writeFile(join(mediaImagesPath, imageName), req.file.buffer);
           mediaDB[singleMediaIndex].Poster =
-            "http://localhost:6969/images/" + imageName;
+            process.env.NODE_ENV === "production"
+              ? process.env.BE_URL_PROD + "/images/" + imageName
+              : process.env.BE_URL_DEV + "/images/" + imageName;
+
           await writeMedia(mediaDB);
           res.send("Poster Added!");
         } catch (error) {
