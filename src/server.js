@@ -8,7 +8,7 @@ const {
   catchAllHandler,
 } = require("./lib/errorHandling");
 
-const moviesRouter = require("./movies");
+const mediaRouter = require("./media");
 
 const server = express();
 const port = process.env.PORT || 3003;
@@ -16,7 +16,7 @@ const port = process.env.PORT || 3003;
 server.use(cors());
 server.use(express.json());
 
-server.use("/movies", moviesRouter);
+server.use("/media", mediaRouter);
 
 server.use(notFoundHandler);
 server.use(unauthorizedHandler);
